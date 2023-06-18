@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Measurement Converter</title>
+  <link rel="stylesheet" type="text/css" href="styles.css">
+
+</head>
+<body>
+  <h1>Measurement Converter</h1>
+  <label for="measurementsInput">Enter Measurements:</label>
+  <input type="text" id="measurementsInput">
+  <button onclick="convertMeasurements()">Convert</button>
+  <br>
+  <label for="result">Result:</label>
+  <span id="result"></span>
+
+  <script>
+    // Check if the user is logged in and the token is still valid
+    var isLoggedIn = localStorage.getItem("isLoggedIn");
+    var tokenExpiration = localStorage.getItem("tokenExpiration");
+    var username = localStorage.getItem("username"); // Retrieve the stored username
+
+
+    if (!isLoggedIn || !tokenExpiration || Date.now() > tokenExpiration) {
+      // If not logged in or token expired, redirect to the login page
+      window.location.href = "login.html";
+    }
+
+    function convertMeasurements() {
+      if (!isLoggedIn || !tokenExpiration || Date.now() > tokenExpiration) {
+      // If not logged in or token expired, redirect to the login page
+      window.location.href = "login.html";
+    }
+    else{
+      var measurementsInput = document.getElementById("measurementsInput").value;
+
+      fetch("http://localhost:8080/convert-measurements", {
+        method: "POST",
+        body: new URLSearchParams({
+          "convert-measurements": measurementsInput,
+          "username": username
+        })
+      })
+      .then(response => response.json())
+      .then(data => {
+        var resultElement = document.getElementById("result");
+        resultElement.innerHTML = data.result.join(", ");
+      })
+      .catch(error => console.error("Error:", error));
+    }
+    }
+  </script>
+</body>
+</html>
